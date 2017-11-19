@@ -12,12 +12,15 @@ output:
 ```{r}
 library(ggplot2)
 activity <- read.csv("activity.csv")
+
+summary(activity)
 ```
 2. Process/transform the data into a format suitable for the analysis:
 ```{r}
 activity$date <- as.Date(activity$date,"%Y %m %d")
 cleanactivity <- activity[!is.na(activity$steps),]
 ```
+
 ## What is mean total number of steps taken per day?
 1. Calculate the total number of steps taken per day:
 ```{r}
@@ -55,7 +58,8 @@ plot(x = interval$Interval,y = interval$Steps, type = "l", col = "blue",
 ```
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 ```{r}
-max(aggregate(cleanactivity$steps,by = list(cleanactivity$interval),FUN = max))
+# Obtaining 5-min Interval
+interval$Interval[interval$Steps==max(interval$Steps)]
 ```
 
 
@@ -119,7 +123,7 @@ fillactivity$day <- ifelse(weekdays(as.Date(fillactivity$date,"%Y %m %d"))%in%c(
 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis):
 ```{r, fig.height=4}
 # Calculate Average Steps per 5-min Interval:
-avgactivity <- aggregate(fillactivity$steps, by = list(fillactivity$interval, fillactivity$day), FUN = mean)
+avgactivity <- aggregate(fillactivity$steps,by = list(fillactivity$interval,fillactivity$day),FUN = mean)
 # Assign Names to Vector
 names(avgactivity)<-c("Interval","Day","Steps")
 # Plot Average Steps per 5-min Interval

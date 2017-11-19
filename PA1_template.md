@@ -20,6 +20,19 @@ library(ggplot2)
 
 ```r
 activity <- read.csv("activity.csv")
+
+summary(activity)
+```
+
+```
+##      steps                date          interval     
+##  Min.   :  0.00   2012-10-01:  288   Min.   :   0.0  
+##  1st Qu.:  0.00   2012-10-02:  288   1st Qu.: 588.8  
+##  Median :  0.00   2012-10-03:  288   Median :1177.5  
+##  Mean   : 37.38   2012-10-04:  288   Mean   :1177.5  
+##  3rd Qu.: 12.00   2012-10-05:  288   3rd Qu.:1766.2  
+##  Max.   :806.00   2012-10-06:  288   Max.   :2355.0  
+##  NA's   :2304     (Other)   :15840
 ```
 2. Process/transform the data into a format suitable for the analysis:
 
@@ -27,6 +40,7 @@ activity <- read.csv("activity.csv")
 activity$date <- as.Date(activity$date,"%Y %m %d")
 cleanactivity <- activity[!is.na(activity$steps),]
 ```
+
 ## What is mean total number of steps taken per day?
 1. Calculate the total number of steps taken per day:
 
@@ -83,11 +97,12 @@ plot(x = interval$Interval,y = interval$Steps, type = "l", col = "blue",
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 ```r
-max(aggregate(cleanactivity$steps,by = list(cleanactivity$interval),FUN = max))
+# Obtaining 5-min Interval
+interval$Interval[interval$Steps==max(interval$Steps)]
 ```
 
 ```
-## [1] 2355
+## [1] 835
 ```
 
 
@@ -186,7 +201,7 @@ fillactivity$day <- ifelse(weekdays(as.Date(fillactivity$date,"%Y %m %d"))%in%c(
 
 ```r
 # Calculate Average Steps per 5-min Interval:
-avgactivity <- aggregate(fillactivity$steps, by = list(fillactivity$interval, fillactivity$day), FUN = mean)
+avgactivity <- aggregate(fillactivity$steps,by = list(fillactivity$interval,fillactivity$day),FUN = mean)
 # Assign Names to Vector
 names(avgactivity)<-c("Interval","Day","Steps")
 # Plot Average Steps per 5-min Interval
