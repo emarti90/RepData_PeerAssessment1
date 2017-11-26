@@ -11,13 +11,14 @@ output:
 1. Load the data:
 ```{r}
 library(ggplot2)
+library(lubridate)
 activity <- read.csv("activity.csv")
 
 summary(activity)
 ```
 2. Process/transform the data into a format suitable for the analysis:
 ```{r}
-activity$date <- as.Date(activity$date,"%Y %m %d")
+activity$date <- ymd(activity$date)
 cleanactivity <- activity[!is.na(activity$steps),]
 ```
 
@@ -27,7 +28,7 @@ cleanactivity <- activity[!is.na(activity$steps),]
 daysteps <- aggregate(cleanactivity$steps,by = list(cleanactivity$date), FUN = sum, na.rm = TRUE)
 ```
 2. Make a histogram of the total number of steps taken each day:
-```{r}
+```{r fig.align="center"}
 qplot(daysteps$x, xlab = "Steps", main = "Total number of steps taken per day")
 ```
 3. Calculate and report the mean and median of the total number of steps taken per day
@@ -51,7 +52,7 @@ interval <- aggregate(cleanactivity$steps,by = list(cleanactivity$interval),FUN 
 # Assign Names to Data Frame
 names(interval) <- c("Interval","Steps")
 ```
-```{r}
+```{r fig.align="center"}
 plot(x = interval$Interval,y = interval$Steps, type = "l", col = "blue",
                                                xlab = "5-min Interval", ylab = "Average Steps",
                                                main = "Average Steps by 5-min Interval Accross all days")
@@ -85,7 +86,7 @@ fillactivity <- activity
 fillactivity$steps[is.na(activity$steps)] <- 0
 ```
 4. Make a histogram of the total number of steps taken each day:
-```{r}
+```{r fig.align="center"}
 # Calculate Total Number of Steps
 daysteps2 <- aggregate(fillactivity$steps,by = list(fillactivity$date), FUN = sum, na.rm = TRUE)
 # Plot Histogram of Total number of Steps
@@ -107,7 +108,9 @@ print(stats2)
 ```{r}
 # Merge both Data Frames by Date
 diff_mean <- merge(mean,mean2,by="Date")
+diff_mean$Difference <- diff_mean[,2] - diff_mean[,3]
 diff_median <- merge(median,median2,by="Date")
+diff_median$Difference <- diff_median[,2] - diff_median[,3]
 
 print(diff_mean)
 print(diff_median)
@@ -121,7 +124,7 @@ fillactivity$day <- ifelse(weekdays(as.Date(fillactivity$date,"%Y %m %d"))%in%c(
                            "weekend","weekday")
 ```
 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis):
-```{r, fig.height=4}
+```{r, fig.align="center"}
 # Calculate Average Steps per 5-min Interval:
 avgactivity <- aggregate(fillactivity$steps,by = list(fillactivity$interval,fillactivity$day),FUN = mean)
 # Assign Names to Vector
